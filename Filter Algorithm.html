@@ -1,0 +1,99 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        #txtSearch {
+            background-image: url('/css/searchicon.png');
+            background-position: 10px 12px;
+            background-repeat: no-repeat;
+            width: 100%;
+            font-size: 16px;
+            padding: 12px 20px 12px 40px;
+            border: 1px solid #ddd;
+            margin-bottom: 12px;
+        }
+
+        #myUL {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+            #myUL li {
+                border: 1px solid #ddd;
+                margin-top: -1px;
+                background-color: #f6f6f6;
+                padding: 12px;
+                text-decoration: none;
+                font-size: 18px;
+                color: black;
+                display: block
+            }
+
+                #myUL li:hover:not(.header) {
+                    background-color: #eee;
+                }
+    </style>
+</head>
+<body>
+    <input type="text" id="txtSearch" onkeyup="filterdata(this.value)" placeholder="Search" title="Type in a name">
+
+    <ul id="myUL">
+        <li>Asp.Net MVC</li>
+        <li>Asp.Net Core</li>
+        <li>Angular</li>
+        <li>React</li>
+        <li>Mongo</li>
+        <li>Express</li>
+        <li>Javascript</li>
+    </ul>
+
+    <script>
+
+        class AsyncListItems {
+            constructor(arr) {
+                this.data = arr;
+            }
+
+            filterAsync(predicate) {
+                const data = Array.from(this.data);
+                return Promise.all(data.map((element, index) => predicate(element, index, data)))
+                    .then(result => {
+                        return data.filter((element, index) => {
+                            return result[index];
+                        });
+                    });
+            }
+        }
+
+        var lstArray = ["Asp.Net MVC", "Asp.Net Core", "Angular", "React", "Mongo", "Express", "Javascript"];
+        let arr = new AsyncListItems(lstArray);
+        function filterdata(val) {
+            arr.filterAsync(async (element) => {
+                return new Promise(res => {
+                    setTimeout(() => {
+                        res(element.toUpperCase().indexOf(val.toUpperCase()) > -1);
+                    }, 100);
+                });
+            }).then(result => {
+                console.log(result);
+                var list = document.getElementById("myUL");
+                var ls = result.map((val, index) => {
+                    return "<li>" + val + "</li>";
+                });
+                var lst = "";
+                for (var i = 0; i < ls.length; i++) {
+                    lst += ls[i];
+                }
+                list.innerHTML = lst;
+            });
+        }
+    </script>
+
+</body>
+</html>
